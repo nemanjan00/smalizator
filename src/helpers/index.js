@@ -44,10 +44,15 @@ const search = (pattern) => {
     });
 };
 
+const javaCallFormat = (args) => {
+    return args.map((arg, index) => `${arg.java} arg${index + 1}`).join(", ");
+};
+
 module.exports = {
     primitiveNames,
     smaliClassToJava,
     javaClassToSmali,
     renderTemplate,
-    search
+    search,
+    javaCallFormat
 };

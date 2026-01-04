@@ -1,10 +1,6 @@
 const beautify = require("../../beautify/index.js");
-const h = require("../../helpers/index.js");
+const helpers = require("../../helpers/index.js");
 const fridaCallTemplate = require("../../templates/frida_hook/index.js");
-
-const javaCallFormat = (args) => {
-    return args.map((arg, index) => `${arg.java} arg${index + 1}`).join(", ");
-};
 
 module.exports = (argv) => {
     const directive = argv.call.trim();
@@ -12,7 +8,7 @@ module.exports = (argv) => {
 
     const operands = directive.slice(instruction.length).trim();
     const signature = operands.split(",").slice(-1)[0].trim();
-    const classOrigin = h.smaliClassToJava(signature.split("->")[0]);
+    const classOrigin = helpers.smaliClassToJava(signature.split("->")[0]);
     let methodName = signature.split("->")[1].split("(")[0].trim();
 
     if (methodName === "<init>") {
@@ -35,7 +31,7 @@ module.exports = (argv) => {
             if (char == ";") {
                 isParsingClass = false;
                 methodArgs.push({
-                    java: h.smaliClassToJava(className) + Array(arrayLevel).fill("[]").join(""),
+                    java: helpers.smaliClassToJava(className) + Array(arrayLevel).fill("[]").join(""),
                     smali: Array(arrayLevel).fill("[").join("") + className,
                     arrayLevel,
                     isPrimitive: false
@@ -63,9 +59,9 @@ module.exports = (argv) => {
             return;
         }
 
-        if (h.primitiveNames[char]) {
+        if (helpers.primitiveNames[char]) {
             methodArgs.push({
-                java: h.primitiveNames[char] + Array(arrayLevel).fill("[]").join(""),
+                java: helpers.primitiveNames[char] + Array(arrayLevel).fill("[]").join(""),
                 smali: Array(arrayLevel).fill("[").join("") + char,
                 arrayLevel,
                 isPrimitive: true
@@ -86,12 +82,12 @@ module.exports = (argv) => {
             arg.isLast = (methodArgs.length == index + 1)
             return arg;
         }),
-        javaCallFormat: javaCallFormat(methodArgs)
+        javaCallFormat: helpers.javaCallFormat(methodArgs)
     };
 
     // Formatting arguments for the template implementation function
     method.arguments = method.arguments.map((arg, i) => `arg${i}`).join(", ");
 
-    const code = h.renderTemplate(fridaCallTemplate, method);
+    const code = helpers.renderTemplate(fridaCallTemplate, method);
     beautify(code).then(console.log);
 };

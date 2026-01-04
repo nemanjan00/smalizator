@@ -34,7 +34,7 @@ sudo npm install -g smalizator
 
 **Generate a Frida hook:**
 ```bash
-smalizer hook --call "invoke-virtual {v0}, Lcom/example/MyClass;->myMethod(I)V"
+smalizer hook "invoke-virtual {v0}, Lcom/example/MyClass;->myMethod(I)V"
 ```
 
 **Find implementations of an interface:**
