@@ -48,11 +48,74 @@ const javaCallFormat = (args) => {
     return args.map((arg, index) => `${arg.java} arg${index + 1}`).join(", ");
 };
 
+const sanitizeVariableName = (name) => {
+    // Remove invalid characters like <, >, -, etc.
+    return name.replace(/[^a-zA-Z0-9_$]/g, "_");
+};
+
+const parseSmaliArguments = (smaliArguments) => {
+    const methodArgs = [];
+    let isParsingClass = false;
+    let className = "";
+    let isVoid = false;
+    let arrayLevel = 0;
+
+    smaliArguments.split("").map(char => {
+        if (isParsingClass) {
+            className += char;
+
+            if (char == ";") {
+                isParsingClass = false;
+                methodArgs.push({
+                    java: smaliClassToJava(className) + Array(arrayLevel).fill("[]").join(""),
+                    smali: Array(arrayLevel).fill("[").join("") + className,
+                    arrayLevel,
+                    isPrimitive: false
+                });
+                className = "";
+                arrayLevel = 0;
+            }
+
+            return;
+        }
+
+        if (char == "[") {
+            arrayLevel++;
+            return;
+        }
+
+        if (char == "L") {
+            isParsingClass = true;
+            className += char;
+            return
+        }
+
+        if (char == "V") {
+            isVoid = true;
+            return;
+        }
+
+        if (primitiveNames[char]) {
+            methodArgs.push({
+                java: primitiveNames[char] + Array(arrayLevel).fill("[]").join(""),
+                smali: Array(arrayLevel).fill("[").join("") + char,
+                arrayLevel,
+                isPrimitive: true
+            });
+            arrayLevel = 0;
+        }
+    });
+
+    return methodArgs;
+};
+
 module.exports = {
     primitiveNames,
     smaliClassToJava,
     javaClassToSmali,
     renderTemplate,
     search,
-    javaCallFormat
+    javaCallFormat,
+    sanitizeVariableName,
+    parseSmaliArguments
 };
