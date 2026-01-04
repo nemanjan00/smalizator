@@ -2,6 +2,26 @@ const beautify = require("../../beautify/index.js");
 const helpers = require("../../helpers/index.js");
 const fridaCallTemplate = require("../../templates/frida_hook/index.js");
 
+const sanitizeVariableName = (name) => {
+    // Remove invalid characters like <, >, -, etc.
+    return name.replace(/[^a-zA-Z0-9_$]/g, "_");
+};
+
+// Formats: "java.lang.String", "int", etc.
+const formatOverloadArgs = (args) => {
+    return args.map(arg => `		"${arg.java}"`).join(",\n");
+};
+
+// Formats: arg1, // java.lang.String
+const formatImplementationArgs = (args) => {
+    return args.map((arg, i) => `		arg${i + 1} // ${arg.java}`).join(",\n");
+};
+
+// Formats: arg1, // java.lang.String
+const formatCallArgs = (args) => {
+    return args.map((arg, i) => `			arg${i + 1} // ${arg.java}`).join(",\n");
+};
+
 module.exports = (argv) => {
     const directive = argv.call.trim();
     const instruction = directive.split(" ")[0];
@@ -70,24 +90,22 @@ module.exports = (argv) => {
         }
     });
 
-    const method = {
-        class: classOrigin,
-        className: classOrigin.split(".").slice(-1)[0],
-        methodType,
-        methodName,
-        isVoid,
-        isStatic: (methodType == "static"),
-        arguments: methodArgs.map((arg, index) => {
-            arg.index = index + 1;
-            arg.isLast = (methodArgs.length == index + 1)
-            return arg;
-        }),
-        javaCallFormat: helpers.javaCallFormat(methodArgs)
+    // Variables construction
+    const classVarName = "Class" + sanitizeVariableName(classOrigin.split(".").join(""));
+    const methodVarName = "Func" + sanitizeVariableName(classOrigin.split(".").slice(-1)[0]) + sanitizeVariableName(methodName);
+
+    const methodData = {
+        smali_signature: directive,
+        method_signature: signature, // Or just the method part if preferred, but usually the full signature is useful
+        class_name: classOrigin,
+        class_var: classVarName,
+        method_name: methodName,
+        method_var: methodVarName,
+        overload_args: formatOverloadArgs(methodArgs),
+        implementation_args: formatImplementationArgs(methodArgs),
+        call_args: formatCallArgs(methodArgs)
     };
 
-    // Formatting arguments for the template implementation function
-    method.arguments = method.arguments.map((arg, i) => `arg${i}`).join(", ");
-
-    const code = helpers.renderTemplate(fridaCallTemplate, method);
+    const code = helpers.renderTemplate(fridaCallTemplate, methodData);
     beautify(code).then(console.log);
 };
