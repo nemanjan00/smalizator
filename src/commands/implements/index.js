@@ -1,13 +1,18 @@
 const { search } = require("../../helpers/search.js");
 
-module.exports = (argv) => {
+exports.command = "implements [interface]";
+exports.describe = "Find classes that implement interface";
+exports.builder = {};
+
+exports.handler = (argv) => {
     if (argv.interface.slice(0, 1) !== "L") {
-        argv.interface = helpers.javaClassToSmali(argv.interface);
+        console.log("Please use smali class notation (Lpackage/name;)");
+        return;
     }
 
-    const interface = argv.interface;
+    const searchString = `.implements ${argv.interface}`;
 
-    helpers.search(`\\.implements ${interface}`).then(result => {
-        console.log(result.response);
+    search(searchString).then(response => {
+        console.log(response.stdout);
     });
 };

@@ -1,13 +1,18 @@
 const { search } = require("../../helpers/search.js");
 
-module.exports = (argv) => {
+exports.command = "extends [class]";
+exports.describe = "Find classes that extend class";
+exports.builder = {};
+
+exports.handler = (argv) => {
     if (argv.class.slice(0, 1) !== "L") {
-        argv.class = helpers.javaClassToSmali(argv.class);
+        console.log("Please use smali class notation (Lpackage/name;)");
+        return;
     }
 
-    const className = argv.class;
+    const searchString = `.super ${argv.class}`;
 
-    helpers.search(`\\.super ${className}`).then(result => {
-        console.log(result.response);
+    search(searchString).then(response => {
+        console.log(response.stdout);
     });
 };

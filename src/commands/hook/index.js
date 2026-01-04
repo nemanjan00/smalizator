@@ -4,7 +4,17 @@ const utils = require("../../helpers/utils.js");
 const fridaGenerator = require("../../generators/frida/index.js");
 const xposedGenerator = require("../../generators/xposed/index.js");
 
-module.exports = (argv) => {
+exports.command = "hook [call]";
+exports.describe = "Hook method call in frida";
+exports.builder = (yargs) => {
+    return yargs.option("xposed", {
+        alias: "x",
+        type: "boolean",
+        description: "Generate Xposed hook instead of Frida"
+    });
+};
+
+exports.handler = (argv) => {
     if (!argv.call) {
         console.error("Error: No method signature provided.");
         return;
