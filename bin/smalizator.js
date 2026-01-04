@@ -7,6 +7,7 @@ const argv = yargs
     .command("hook [call]", "Hook method call in frida")
     .command("implements [interface]", "Find classes that implement interface")
     .command("extends [class]", "Find classes that extend class")
+    .scriptName("smalizator")
     .help()
     .alias("help", "h")
     .demandCommand(1, "You need at least one command before moving on")

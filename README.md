@@ -34,17 +34,17 @@ sudo npm install -g smalizator
 
 **Generate a Frida hook:**
 ```bash
-smalizer hook "invoke-virtual {v0}, Lcom/example/MyClass;->myMethod(I)V"
+smalizator hook "invoke-virtual {v0}, Lcom/example/MyClass;->myMethod(I)V"
 ```
 
 **Find implementations of an interface:**
 ```bash
-smalizer implements Ljava/lang/Runnable;
+smalizator implements Ljava/lang/Runnable;
 ```
 
 **Find extensions of a class:**
 ```bash
-smalizer extends Ljava/lang/Object;
+smalizator extends Ljava/lang/Object;
 ```
 
 ## Developers guide

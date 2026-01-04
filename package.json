@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "bin": {
-    "smalizer": "./bin/smalizer.js"
+    "smalizator": "bin/smalizator.js"
   },
   "license": "MIT",
   "private": false,
