@@ -1,4 +1,4 @@
-const helpers = require("../../helpers/index.js");
+const utils = require("../../helpers/utils.js");
 const fridaCallTemplate = require("../../templates/frida_hook/index.js");
 
 // Formats: "java.lang.String", "int", etc.
@@ -45,5 +45,5 @@ module.exports = (methodInfo) => {
         call_args: formatCallArgs(methodArgs)
     };
 
-    return helpers.renderTemplate(fridaCallTemplate, methodData);
+    return utils.renderTemplate(fridaCallTemplate, methodData);
 };

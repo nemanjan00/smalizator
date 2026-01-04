@@ -1,5 +1,6 @@
 const beautify = require("../../beautify/index.js");
-const helpers = require("../../helpers/index.js");
+const smaliHelpers = require("../../helpers/smali.js");
+const utils = require("../../helpers/utils.js");
 const fridaGenerator = require("../../generators/frida/index.js");
 const xposedGenerator = require("../../generators/xposed/index.js");
 
@@ -23,8 +24,8 @@ module.exports = (argv) => {
     const returnType = methodPart.split(")")[1];
 
     // 3. Process Data
-    const classOrigin = helpers.smaliClassToJava(classPart);
-    const methodArgs = helpers.parseSmaliArguments(smaliArgs);
+    const classOrigin = smaliHelpers.smaliClassToJava(classPart);
+    const methodArgs = smaliHelpers.parseSmaliArguments(smaliArgs);
     const isVoid = returnType === "V";
 
     let methodName = rawMethodName;
@@ -32,8 +33,8 @@ module.exports = (argv) => {
         methodName = "$init";
     }
 
-    const classVarName = "Class" + helpers.sanitizeVariableName(classOrigin.split(".").join(""));
-    const methodVarName = "Func" + helpers.sanitizeVariableName(classOrigin.split(".").slice(-1)[0]) + helpers.sanitizeVariableName(methodName);
+    const classVarName = "Class" + utils.sanitizeVariableName(classOrigin.split(".").join(""));
+    const methodVarName = "Func" + utils.sanitizeVariableName(classOrigin.split(".").slice(-1)[0]) + utils.sanitizeVariableName(methodName);
 
     const methodInfo = {
         directive,

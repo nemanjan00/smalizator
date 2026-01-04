@@ -1,5 +1,3 @@
-const exec = require("../shell/index.js");
-
 const primitiveNames = {
     "Z": "boolean",
     "B": "byte",
@@ -23,42 +21,14 @@ const javaClassToSmali = (className) => {
     return "L" + className.replace(/\./g, "/") + ";";
 };
 
-const renderTemplate = (template, data) => {
-    return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-        return data[key] !== undefined ? data[key] : match;
-    });
-};
-
-const search = (pattern) => {
-    return new Promise((resolve) => {
-        exec("which", ["ag"]).then((result) => {
-            if (result.code === 0) {
-                exec("ag", ["--color", pattern]).then(res => resolve(res));
-            } else {
-                console.warn("To start seeing results faster, install silver searcher (ag)");
-
-                // grep -r pattern .
-                exec("grep", ["-r", "--color=always", pattern, "."]).then(res => resolve(res));
-            }
-        });
-    });
-};
-
-const javaCallFormat = (args) => {
-    return args.map((arg, index) => `${arg.java} arg${index + 1}`).join(", ");
-};
-
-const sanitizeVariableName = (name) => {
-    // Remove invalid characters like <, >, -, etc.
-    return name.replace(/[^a-zA-Z0-9_$]/g, "_");
-};
-
 const parseSmaliArguments = (smaliArguments) => {
     const methodArgs = [];
     let isParsingClass = false;
     let className = "";
     let isVoid = false;
     let arrayLevel = 0;
+
+    if (!smaliArguments) return [];
 
     smaliArguments.split("").map(char => {
         if (isParsingClass) {
@@ -113,9 +83,5 @@ module.exports = {
     primitiveNames,
     smaliClassToJava,
     javaClassToSmali,
-    renderTemplate,
-    search,
-    javaCallFormat,
-    sanitizeVariableName,
     parseSmaliArguments
 };

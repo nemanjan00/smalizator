@@ -1,4 +1,4 @@
-const helpers = require("../../helpers/index.js");
+const { search } = require("../../helpers/search.js");
 
 module.exports = (argv) => {
     if (argv.interface.slice(0, 1) !== "L") {

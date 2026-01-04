@@ -1,4 +1,4 @@
-const helpers = require("../../helpers/index.js");
+const utils = require("../../helpers/utils.js");
 const xposedCallTemplate = require("../../templates/xposed_hook/index.js");
 
 const formatXposedArgs = (args) => {
@@ -33,5 +33,5 @@ module.exports = (methodInfo) => {
         after_hook_args: `			// ${isVoid ? "void" : "Object"} ret = param.getResult();`
     };
 
-    return helpers.renderTemplate(xposedCallTemplate, methodData);
+    return utils.renderTemplate(xposedCallTemplate, methodData);
 };
