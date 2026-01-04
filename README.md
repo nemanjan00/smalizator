@@ -12,8 +12,8 @@ Smalizator is a CLI tool for Frida hooking and Smali reverse engineering.
 * [Installation / update](#installation--update)
 * [Usage](#usage)
 * [Developers guide](#developers-guide)
-  * [Yarn package manager](#yarn-package-manager)
-  * [Coding Style](#coding-style)
+    * [Yarn package manager](#yarn-package-manager)
+    * [Coding Style](#coding-style)
 * [Authors](#authors)
 
 <!-- vim-markdown-toc -->
@@ -39,12 +39,12 @@ smalizator hook "invoke-virtual {v0}, Lcom/example/MyClass;->myMethod(I)V"
 
 **Find implementations of an interface:**
 ```bash
-smalizator implements Ljava/lang/Runnable;
+smalizator implements "Ljava/lang/Runnable;"
 ```
 
 **Find extensions of a class:**
 ```bash
-smalizator extends Ljava/lang/Object;
+smalizator extends "Ljava/lang/Object;"
 ```
 
 ## Developers guide
