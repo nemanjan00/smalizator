@@ -14,12 +14,12 @@ const formatOverloadArgs = (args) => {
 
 // Formats: arg1, // java.lang.String
 const formatImplementationArgs = (args) => {
-    return args.map((arg, i) => `		arg${i + 1} // ${arg.java}`).join(",\n");
+    return args.map((arg, i) => `		arg${i + 1}, // ${arg.java}`).join("\n");
 };
 
 // Formats: arg1, // java.lang.String
 const formatCallArgs = (args) => {
-    return args.map((arg, i) => `			arg${i + 1} // ${arg.java}`).join(",\n");
+    return args.map((arg, i) => `			arg${i + 1}, // ${arg.java}`).join("\n");
 };
 
 module.exports = (argv) => {

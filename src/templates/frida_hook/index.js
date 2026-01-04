@@ -11,9 +11,10 @@ module.exports = `Java.perform(function() {
 	{{method_var}}.implementation = function(
 {{implementation_args}}
 	) {
-		return {{method_var}}.call(
+		const ret = {{method_var}}.call(
 			this,
 {{call_args}}
 		);
+		return ret;
 	};
 });`;
