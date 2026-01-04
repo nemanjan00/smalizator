@@ -1,6 +1,7 @@
 const beautify = require("../../beautify/index.js");
 const helpers = require("../../helpers/index.js");
 const fridaCallTemplate = require("../../templates/frida_hook/index.js");
+const xposedCallTemplate = require("../../templates/xposed_hook/index.js");
 
 const sanitizeVariableName = (name) => {
     // Remove invalid characters like <, >, -, etc.
@@ -28,7 +29,24 @@ const formatCallArgs = (args) => {
     }).join("\n");
 };
 
+const formatXposedArgs = (args) => {
+    return args.map(arg => {
+        if (arg.isPrimitive && arg.arrayLevel === 0) {
+            return `	${arg.java}.class,`;
+        }
+        return `	"${arg.java}",`;
+    }).join("\n");
+};
+
+const formatXposedBeforeArgs = (args) => {
+    return args.map((arg, i) => `			// ${arg.java} arg${i + 1} = (${arg.java}) param.args[${i}];`).join("\n");
+};
+
 module.exports = (argv) => {
+    if (!argv.call) {
+        console.error("Error: No method signature provided.");
+        return;
+    }
     const directive = argv.call.trim();
     const instruction = directive.split(" ")[0];
 
@@ -100,18 +118,33 @@ module.exports = (argv) => {
     const classVarName = "Class" + sanitizeVariableName(classOrigin.split(".").join(""));
     const methodVarName = "Func" + sanitizeVariableName(classOrigin.split(".").slice(-1)[0]) + sanitizeVariableName(methodName);
 
-    const methodData = {
-        smali_signature: directive,
-        method_signature: signature, // Or just the method part if preferred, but usually the full signature is useful
-        class_name: classOrigin,
-        class_var: classVarName,
-        method_name: methodName,
-        method_var: methodVarName,
-        overload_args: formatOverloadArgs(methodArgs),
-        implementation_args: formatImplementationArgs(methodArgs),
-        call_args: formatCallArgs(methodArgs)
-    };
+    if (argv.xposed) {
+        const isConstructor = methodName === "$init";
+        const methodData = {
+            class_name: classOrigin,
+            xposed_helper: isConstructor ? "findAndHookConstructor" : "findAndHookMethod",
+            method_name_arg: isConstructor ? "" : `	"${methodName}",`,
+            xposed_args: formatXposedArgs(methodArgs),
+            before_hook_args: formatXposedBeforeArgs(methodArgs),
+            after_hook_args: `			// ${isVoid ? "void" : "Object"} ret = param.getResult();`
+        };
 
-    const code = helpers.renderTemplate(fridaCallTemplate, methodData);
-    beautify(code).then(console.log);
+        const code = helpers.renderTemplate(xposedCallTemplate, methodData);
+        beautify(code, "java").then(console.log);
+    } else {
+        const methodData = {
+            smali_signature: directive,
+            method_signature: signature, // Or just the method part if preferred, but usually the full signature is useful
+            class_name: classOrigin,
+            class_var: classVarName,
+            method_name: methodName,
+            method_var: methodVarName,
+            overload_args: formatOverloadArgs(methodArgs),
+            implementation_args: formatImplementationArgs(methodArgs),
+            call_args: formatCallArgs(methodArgs)
+        };
+
+        const code = helpers.renderTemplate(fridaCallTemplate, methodData);
+        beautify(code).then(console.log);
+    }
 };

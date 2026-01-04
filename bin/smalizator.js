@@ -7,6 +7,11 @@ const argv = yargs
     .command("hook [call]", "Hook method call in frida")
     .command("implements [interface]", "Find classes that implement interface")
     .command("extends [class]", "Find classes that extend class")
+    .option("xposed", {
+        alias: "x",
+        type: "boolean",
+        description: "Generate Xposed hook instead of Frida"
+    })
     .scriptName("smalizator")
     .help()
     .alias("help", "h")
