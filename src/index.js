@@ -1,5 +1,5 @@
 module.exports = {
-    smalize: () => {
-        console.log('Hello from smalizator!');
-    }
+	smalize: () => {
+		console.log("Hello from smalizator!");
+	}
 };

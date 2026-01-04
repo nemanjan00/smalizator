@@ -1,0 +1,37 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "commonjs": true,
+        "mocha": true
+    },
+    "extends": "eslint:recommended",
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2019,
+        "allowImportExportEverywhere": true,
+        "requireConfigFile": false
+    },
+    "rules": {
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-redeclare": 1,
+        "no-trailing-spaces": "error",
+        "no-param-reassign": "error"
+    }
+}
